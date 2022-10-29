@@ -14,9 +14,9 @@ int obtenerDescripcionTipo(tipo tipoList[],int id, int len, char descripcion[])
 			{
 				strcpy(descripcion, tipoList[i].descripcion);
 				break;
-				retorno = 1;
 			}
 		}
+		retorno = 1;
 	}
 	return retorno;
 }
@@ -25,11 +25,16 @@ int printTipos(tipo tipoList[], int len)
 	int retorno = 0;
 	if(tipoList != NULL && len > 0)
 	{
-		printf("					**LISTADO DE TIPOS**					\n");
-		printf("ID |		Descripcion|\n");
-		printf("%d,		%s\n",tipoList->id,tipoList->descripcion);
+	    printf("					**LISTADO DE TIPOS**					\n");
+        printf("ID |		Descripcion|\n");
+	    for(int i; i<= len; i++)
+		{
+    		printf("%d,		%s\n",tipoList[i].id,tipoList[i].descripcion);
+		}
+		retorno = 1;
 	}
 
 
 	return retorno;
 }
+

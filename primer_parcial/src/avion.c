@@ -4,6 +4,7 @@
 #include "avion.h"
 #include "aerolinea.h"
 #include "tipo.h"
+#include "piloto.h"
 #include "utn_biblioteca.h"
 
 static int getId(void);
@@ -30,12 +31,12 @@ int initAviones(avion avionList[],int len)
 }
 
 //cargo los aviones
-//llamo a la funcion pedir,numero,texto y float
+//llamo a la funcion pedir,numero
 //devuelvo el resultado por puntero
-//cambio el valor de la bandera a 0
-int addAviones(avion* list, int len, int id, int idAerolinea,int idTipo, int capacidad)
+//cambio el valor del isEmpty a 0
+int addAviones(avion* list, aerolinea* aerolineasList, tipo* tipoList,  piloto* pilotosList, int len, int lenAerolinea, int lenTipo, int lenPiloto, int id, int capacidad)
 {
-	int retorno=-1;
+	int retorno=0;
 	int auxIdAerolinea;
 	int auxIdTipo;
 	int auxcapacidad;
@@ -44,16 +45,21 @@ int addAviones(avion* list, int len, int id, int idAerolinea,int idTipo, int cap
 	{
 		if(utn_getNumeroInt(&auxcapacidad, "\nIngrese la cantidad de pasajeros entre 10 y 300: ", "Error\n",10, 300, 3)==0)
 		{
+			printAerolineas(aerolineasList,lenAerolinea);
 			if(utn_getNumeroInt(&auxIdAerolinea, "\nIngrese la aerolinea del avion: ", "Error\n",1000, 1004, 3)==0)
 			{
+			    printTipos(tipoList, lenTipo);
 				if(utn_getNumeroInt(&auxIdTipo, "\nIngrese el tipo de avion:\n", "Error\n",5000, 5004, 3)==0)
 				{
+					printPilotos(pilotosList, lenPiloto);
+					{
 						list-> capacidad = auxcapacidad;
 						list-> idAerolinea = auxIdAerolinea;
 						list-> idTipo = auxIdTipo;
 						list->id = getId();
 						list->isEmpty = 0;
-						retorno=0;
+						retorno=1;
+					}
 				}
 			}
 		}
@@ -134,6 +140,7 @@ int modifyAvion(avion* pAvion)
 
 	if(pAvion !=NULL)
 	{
+
 		if(getFieldToModify(&idamodificar)==1)
 		{
 			retorno=1;
@@ -199,9 +206,8 @@ static int getTipo(int* tipo)
 
 int sortAvionesPorAerolineaYCapacidad(avion avionList[], int len)
 {
-	int status=-1;
+	int status=0;
 	int flagSwap;
-	int aux;
 	avion buffer;
 	if(avionList != NULL && len>=0)
 	{
@@ -210,14 +216,16 @@ int sortAvionesPorAerolineaYCapacidad(avion avionList[], int len)
 			flagSwap=0;
 			for(int i=0; i<len-1; i++)
 			{
-				aux = strncmp(avionList[i].idAerolinea,avionList[i+1].idAerolinea,LEN_AEROLINEA_Y_TIPO);
-				if(aux > 0 || (aux==0 && avionList[i].capacidad < avionList[i+1].capacidad))
+			    if(avionList[i].idAerolinea < avionList[i+1].idAerolinea)
 				{
-					flagSwap = 1;
-					buffer = avionList[i];
-					avionList[i] = avionList[i+1];
-					avionList[i+1] = buffer;
-					status=0;
+					if(avionList[i].capacidad < avionList[i+1].capacidad)
+					{
+						flagSwap = 1;
+						buffer = avionList[i];
+						avionList[i] = avionList[i+1];
+						avionList[i+1] = buffer;
+						status=1;
+					}
 				}
 			}
 			len--;
@@ -227,38 +235,38 @@ int sortAvionesPorAerolineaYCapacidad(avion avionList[], int len)
 }
 
 
-int printAviones(avion* pAvion, int len,  aerolinea* pAerolinea, int lenAerolinea, tipo* pTipo, int lenTipo)
+int printAviones(avion* pAvion, int len,  aerolinea* pAerolinea, int lenAerolinea, tipo* pTipo, int lenTipo, piloto* pPiloto, int lenPiloto)
 {
 	int retorno = 0;
-	char descripcionAerolinea[20];
-	char descripcionTipo[20];
 	if(pAvion->isEmpty ==0 && len > 0)
 	{
-		obtenerDescripcionAerolinea(pAerolinea,pAvion->id, lenAerolinea, descripcionAerolinea);
-		obtenerDescripcionTipo(pTipo, pAvion->id, lenTipo, descripcionTipo);
+        printf("					**LISTADO DE AVIONES**					");
+    	printf("ID |		CAPACIDAD		|		AEROLINEA 		|		TIPO		|");
 		for(int i = 0;i< len; i++)
 		{
-			printf("					**LISTADO DE AVIONES**					");
-			printf("ID |		CAPACIDAD		|		AEROLINEA 		|		TIPO		|");
-			printf("%d,		 %d,		 %20s, 		%20s\n",pAvion[i].id, pAvion[i].capacidad, descripcionAerolinea, descripcionTipo);
+			if(pAvion->isEmpty == 0)
+			{
+				printAvion(pAvion, len, pAerolinea, lenAerolinea, pTipo, lenTipo, pPiloto, lenPiloto);
+			}
 		}
 		retorno = 1;
 	}
 	return retorno;
 }
 
-int printAvion(avion pAvion, aerolinea pAerolinea[], int lenAerolinea, tipo pTipo[], int lenTipo)
+int printAvion(avion pAvion[], int len, aerolinea pAerolinea[], int lenAerolinea, tipo pTipo[], int lenTipo, piloto pPiloto[], int lenPiloto)
 {
 	int retorno = 0;
 	char descripcionAerolinea[20];
 	char descripcionTipo[20];
+	char nombrePiloto[20];
 
-		if(pAvion.isEmpty ==0)
+		if(pAvion->isEmpty ==0 && len > 0)
 		{
-			obtenerDescripcionAerolinea(pAerolinea,pAvion.id, lenAerolinea, descripcionAerolinea);
-			obtenerDescripcionTipo(pTipo, pAvion.id, lenTipo, descripcionTipo);
-			printf("%d,		 %d,		 %20s, 		%20s\n",pAvion.id, pAvion.capacidad, descripcionAerolinea, descripcionTipo);
+			obtenerDescripcionAerolinea(pAerolinea,pAerolinea->id, lenAerolinea, descripcionAerolinea);
+			obtenerDescripcionTipo(pTipo, pTipo->id, lenTipo, descripcionTipo);
+			obtenerNombrePiloto(pPiloto, pPiloto->id, lenPiloto, nombrePiloto);
+			printf("%d,		 %d,		 %s, 		%s,		%s\n",pAvion->id, pAvion->capacidad, descripcionAerolinea,	descripcionTipo, nombrePiloto);
 		}
 	return retorno;
 }
-

@@ -1,10 +1,3 @@
-/*
- * aerolinea.h
- *
- *  Created on: 21 oct. 2022
- *      Author: USURIO
- */
-
 #ifndef AEROLINEA_H_
 #define AEROLINEA_H_
 

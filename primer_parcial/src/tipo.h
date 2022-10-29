@@ -1,10 +1,3 @@
-/*
- * tipo.h
- *
- *  Created on: 21 oct. 2022
- *      Author: USURIO
- */
-
 #ifndef TIPO_H_
 #define TIPO_H_
 
